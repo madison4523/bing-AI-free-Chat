@@ -6,17 +6,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api/deepseek': {
-        target: 'https://api.deepseek.com',
+      // 所有 /proxy/* 请求转发到本地 Express 代理服务器
+      '/proxy': {
+        target: 'http://localhost:3001',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/deepseek/, ''),
-        secure: false
-      },
-      '/api/gemini': {
-        target: 'https://generativelanguage.googleapis.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/gemini/, ''),
-        secure: false
+        secure: false,
       }
     }
   }

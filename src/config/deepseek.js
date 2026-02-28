@@ -9,14 +9,10 @@ import {
   formatErrorMessage
 } from './api.js';
 
-const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY;
-// 使用代理路径避免 CORS 问题
-const DEEPSEEK_API_URL = import.meta.env.MODE === 'development' 
-  ? '/api/deepseek/v1/chat/completions'
-  : 'https://api.deepseek.com/v1/chat/completions';
+// API 请求通过本地 Express 代理（server/proxy.js）转发，API Key 由服务端保管
+const DEEPSEEK_API_URL = '/proxy/deepseek/v1/chat/completions';
 
-// 开发模式：如果API密钥未设置或为空，使用模拟回复
-const USE_MOCK_RESPONSE = shouldUseMockMode(DEEPSEEK_API_KEY);
+const USE_MOCK_RESPONSE = shouldUseMockMode();
 
 /**
  * 调用 DeepSeek API 生成回复（SSE 流式输出 + 自动重试 + 中断恢复）
@@ -84,7 +80,6 @@ function runChat(prompt, model = "deepseek-chat", onChunk, conversationHistory =
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
           },
           body: JSON.stringify({
             model: model,

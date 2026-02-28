@@ -50,11 +50,12 @@ export function isRetryableError(error) {
 
 /**
  * 检查是否应该使用 Mock 模式
- * @param {string} apiKey - API 密钥
+ * API Key 已移至服务端（server/proxy.js），前端无需检查 key 是否存在
+ * 通过 VITE_USE_MOCK=true 环境变量显式开启 Mock 模式
  * @returns {boolean} - 是否使用 Mock 模式
  */
-export function shouldUseMockMode(apiKey) {
-  return !apiKey || apiKey === "your_api_key_here" || apiKey.trim() === "";
+export function shouldUseMockMode() {
+  return import.meta.env.VITE_USE_MOCK === 'true';
 }
 
 /**
