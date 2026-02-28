@@ -22,16 +22,14 @@
 
 ## 架构说明
 
-```mermaid
 flowchart LR
-	Browser[Browser
-	React UI] -->|/proxy/*| Vite[Vite Dev Server
-	(proxy /proxy)]
-	Vite --> Proxy[Express
-	server/proxy.js]
-	Proxy --> DeepSeek[DeepSeek API]
-	Proxy --> Gemini[Gemini API]
-```
+Browser[Browser
+React UI] -->|/proxy/\*| Vite[Vite Dev Server
+(proxy /proxy)]
+Vite --> Proxy[Express
+server/proxy.js]
+Proxy --> DeepSeek[DeepSeek API]
+Proxy --> Gemini[Gemini API]
 
 - 前端：`src/config/deepseek.js` / `src/config/gemini.js` 只请求 **相对路径** `/proxy/...`
 - 服务端：`server/proxy.js` 从环境变量读取 Key，并把请求转发到上游 API
