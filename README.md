@@ -22,14 +22,23 @@
 
 ## 架构说明
 
-flowchart LR
-Browser[Browser
-React UI] -->|/proxy/\*| Vite[Vite Dev Server
-(proxy /proxy)]
-Vite --> Proxy[Express
-server/proxy.js]
-Proxy --> DeepSeek[DeepSeek API]
-Proxy --> Gemini[Gemini API]
+> 说明：部分 GitHub/第三方渲染器可能不支持 Mermaid，这里用纯文本架构图，确保在哪都能显示。
+
+```text
+Browser (React UI)
+	|
+	|  POST /proxy/*
+	v
+Vite Dev Server (dev proxy)
+	|
+	|  forward to http://localhost:3001
+	v
+Express Proxy (server/proxy.js)
+	|
+	|---> DeepSeek API (SSE)
+	|
+	`---> Gemini  API (SSE)
+```
 
 - 前端：`src/config/deepseek.js` / `src/config/gemini.js` 只请求 **相对路径** `/proxy/...`
 - 服务端：`server/proxy.js` 从环境变量读取 Key，并把请求转发到上游 API
