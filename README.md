@@ -8,9 +8,11 @@
 
 > 截图位于 `public/`，GitHub 页面可直接看到。
 
-![UI Demo 1](./public/demo1.png)
+![UI Demo 0](./public/ui0.png)
 
-![UI Demo 2](./public/demo2.png)
+![UI Demo 1](./public/ui1.png)
+
+![UI Demo 2](./public/ui2.png)
 
 ### 交互亮点
 
@@ -97,8 +99,9 @@ npm run dev
 ```text
 AI-Chat/
 ├─ public/
-│  ├─ demo1.png
-│  └─ demo2.png
+│  ├─ ui0.png
+│  ├─ ui1.png
+│  └─ ui2.png
 ├─ server/
 │  └─ proxy.js              # Express 代理（隐藏 API Key）
 ├─ src/

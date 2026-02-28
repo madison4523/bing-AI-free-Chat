@@ -148,9 +148,9 @@ app.post("/proxy/gemini/:model", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`[proxy] running on http://localhost:${PORT}`);
   console.log(
-    `[proxy] DeepSeek key: ${process.env.DEEPSEEK_API_KEY ? "✅ loaded" : "❌ missing"}`,
+    `[proxy] DeepSeek key: ${process.env.DEEPSEEK_API_KEY ? "loaded" : "missing"}`,
   );
   console.log(
-    `[proxy] Gemini  key: ${process.env.GEMINI_API_KEY ? "✅ loaded" : "❌ missing"}`,
+    `[proxy] Gemini  key: ${process.env.GEMINI_API_KEY ? "loaded" : "missing"}`,
   );
 });
