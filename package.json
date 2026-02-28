@@ -12,7 +12,6 @@
     "start": "node server/proxy.js"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@tanstack/react-virtual": "^3.13.12",
     "cors": "^2.8.6",

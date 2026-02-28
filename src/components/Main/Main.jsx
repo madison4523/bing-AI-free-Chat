@@ -117,7 +117,7 @@ const Main = () => {
                 <img src={assets.compass_icon} alt="" />
               </div>
               <div className="card">
-                <p>简要总结一下&quot;城市规划&quot;这个概念</p>
+                <p>简要总结一下"城市规划"这个概念</p>
                 <img src={assets.bulb_icon} alt="" />
               </div>
               <div className="card">
@@ -161,7 +161,6 @@ const Main = () => {
                       <p>{message.prompt}</p>
                     </div>
                     <div className="result-data">
-                      <img src={assets.gemini_icon} alt="" />
                       {index === currentMessages.length - 1 && loading ? (
                         <div className="loader">
                           <hr />
