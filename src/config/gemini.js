@@ -59,8 +59,8 @@ function runChat(
         ];
 
         const response = await fetch(`/proxy/gemini/${model}?stream=true`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents,
             generationConfig: {
@@ -81,23 +81,23 @@ function runChat(
         // 手动解析 SSE 流（alt=sse 格式："data: {...}\n")
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
-        let buffer = '';
+        let buffer = "";
 
-        while (true) {
+        for (;;) {
           if (controller.signal.aborted) break;
 
           const { done, value } = await reader.read();
           if (done) break;
 
           buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
+          const lines = buffer.split("\n");
           // 最后一行可能不完整，留到下一个循环
           buffer = lines.pop();
 
           for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
+            if (!line.startsWith("data: ")) continue;
             const jsonStr = line.slice(6).trim();
-            if (jsonStr === '[DONE]' || jsonStr === '') continue;
+            if (jsonStr === "[DONE]" || jsonStr === "") continue;
             try {
               const parsed = JSON.parse(jsonStr);
               const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;

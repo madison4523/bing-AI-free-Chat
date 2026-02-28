@@ -5,11 +5,8 @@ node_modules/
 /dist
 
 .env*
+!.env.example
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-简历文档-性能优化.md
-项目亮点与面试问答.md
-AI服务集成说明.md

@@ -1,83 +1,128 @@
-# bing-AIChat
+# bing-AI-Chat（DeepSeek / Gemini）
+
+一个纯前端聊天应用（React + Vite），支持 **DeepSeek** 与 **Gemini** 双模型、**流式输出**、**会话管理**、**语音输入**、**深浅色主题**。
+
+为避免把 API Key 打包进前端，本项目使用 **Express 代理服务器**在服务端转发请求：浏览器只请求 `/proxy/*`，Key 永远不会出现在 DevTools 里。
+
+## UI 预览
+
+> 截图位于 `public/`，GitHub 页面可直接看到。
+
+![UI Demo 1](./public/demo1.png)
+
+![UI Demo 2](./public/demo2.png)
+
+### 交互亮点
+
+- **侧边栏会话**：新建 / 重命名 / 删除，长列表使用虚拟滚动保持流畅。
+- **主区域对话**：流式输出（边生成边显示），支持中断。
+- **模型切换**：DeepSeek / Gemini（例如 `gemini-2.5-flash`）随时切换。
+- **主题切换**：深色/浅色。
+- **语音输入**：麦克风按钮调用浏览器语音识别。
+
+## 架构说明
+
+```mermaid
+flowchart LR
+	Browser[Browser
+	React UI] -->|/proxy/*| Vite[Vite Dev Server
+	(proxy /proxy)]
+	Vite --> Proxy[Express
+	server/proxy.js]
+	Proxy --> DeepSeek[DeepSeek API]
+	Proxy --> Gemini[Gemini API]
+```
+
+- 前端：`src/config/deepseek.js` / `src/config/gemini.js` 只请求 **相对路径** `/proxy/...`
+- 服务端：`server/proxy.js` 从环境变量读取 Key，并把请求转发到上游 API
 
 ## 快速开始
 
-deepseek.js   # 深度定制的 API/SSE 封装
-gemini.js     # Google Gemini 流式 SDK 封装
+### 环境要求
 
-在项目根目录创建 `.env.local`（没有 Key 会自动退回 Mock 模式）：
+- Node.js **18+**（推荐 20+；`server/proxy.js` 使用内置 `fetch`）
 
-```bash
-VITE_DEEPSEEK_API_KEY=your_deepseek_api_key
-VITE_DEEPSEEK_API_URL=https://api.deepseek.com/chat/completions
-VITE_GEMINI_API_KEY=your_gemini_api_key
-```
-
-### 1. 克隆仓库
-
-```bash
-git clone https://github.com/fox4523/bing-Chat.git
-cd bing-Chat
-```
-
-### 2. 安装依赖
+### 1) 安装依赖
 
 ```bash
 npm install
 ```
 
-### 3. 运行/构建
+### 2) 配置环境变量（不要提交 Key）
+
+复制示例文件并填写你自己的 Key：
 
 ```bash
-npm run dev      # 本地开发，默认 http://localhost:5173
-npm run build    # 生产构建，输出 dist/
-npm run preview  # 以生产构建预览
+cp .env.example .env
 ```
 
-## 使用说明
+`.env`（示例字段）：
 
-- **基本聊天**：输入提问 → 回车/点击发送 → 实时得到流式回复。
-- **语音输入**：点击麦克风按钮即可调用浏览器语音识别。
-- **模型/主题切换**：主区域右上角可切换 DeepSeek / Gemini（含 2.5 Flash）模型与深浅色，变更会立即反映。
-- **会话管理**：侧边栏支持新建、重命名、删除，虚拟列表保证长列表仍流畅。
+- `DEEPSEEK_API_KEY`：DeepSeek Key（服务端使用）
+- `GEMINI_API_KEY`：Gemini Key（服务端使用）
+- `PROXY_PORT`：代理端口（默认 3001）
+- `VITE_USE_MOCK`：前端是否强制 Mock（`true/false`）
+
+> 注意：`.gitignore` 已忽略 `.env*`，但保留了 `.env.example` 作为示例。
+
+### 3) 本地开发（两个终端）
+
+终端 A（启动代理）：
+
+```bash
+npm run dev:server
+```
+
+终端 B（启动前端）：
+
+```bash
+npm run dev
+```
+
+打开：<http://localhost:5173/>
+
+## 数据存储
+
+- 会话数据存储在 **IndexedDB**（避免 localStorage 5MB 限制）
 
 ## 项目结构
 
-```
-bing-AIChat/
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   │   ├── Main/
-│   │   └── SideBar/
-│   ├── config/
-│   │   └── deepseek.js   # 深度定制的 API/SSE 封装
-│   ├── context/
-│   │   └── Context.jsx   # 全局会话/主题/模型管理
-│   ├── App.jsx
-│   ├── index.css
-│   └── main.jsx
-├── README.md
-├── package.json
-└── vite.config.js
+```text
+AI-Chat/
+├─ public/
+│  ├─ demo1.png
+│  └─ demo2.png
+├─ server/
+│  └─ proxy.js              # Express 代理（隐藏 API Key）
+├─ src/
+│  ├─ assets/
+│  ├─ components/
+│  │  ├─ Main/
+│  │  ├─ SideBar/
+│  │  └─ VoiceRecorder/
+│  ├─ config/
+│  │  ├─ api.js             # 重试/Mock/错误处理
+│  │  ├─ deepseek.js        # DeepSeek SSE（走 /proxy）
+│  │  ├─ gemini.js          # Gemini SSE（走 /proxy）
+│  │  └─ db.js              # IndexedDB 封装
+│  └─ context/
+│     └─ Context.jsx
+├─ .env.example
+├─ vite.config.js
+└─ package.json
 ```
 
 ## 常见问题
 
-### DeepSeek 或 Gemini Key 尚未拿到怎么办？
+### 没有 Key 能跑吗？
 
-- 不配置 `.env.local` 也能体验，`src/config/deepseek.js` 和 `src/config/gemini.js` 会自动切换到 Mock 回复并提示如何开通正式 Key。
-	如果已经有其中一个 Key，依然可以切换模型体验不同服务。
+可以。把 `.env` 里 `VITE_USE_MOCK=true`，前端会直接使用 Mock 回复（不会请求真实 API）。
 
-### 如何扩展更多模拟回复？
+### 为什么需要 Express 代理？
 
-- 在 `src/config/api.js` 的 `MOCK_RESPONSES` 中添加新的问答即可，DeepSeek 和 Gemini 都会自动复用同一份模拟回复逻辑。
+Vite 会把 `VITE_` 前缀环境变量注入到浏览器包里，直接在前端调用第三方 API 会导致 Key 泄露。
+因此 Key 只放在服务端，通过 `/proxy/*` 转发。
 
-### 可以接其它 API 吗？
+## License
 
-可以，将 `.env.local` 指向新的 SSE 端点，并在 `deepseek.js` 中调整 `headers` / `body` 即可复用流式与重试逻辑。
-
-## 许可证
-
-MIT License
+MIT
